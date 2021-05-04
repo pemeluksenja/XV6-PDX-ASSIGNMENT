@@ -37,6 +37,42 @@ index 9105b52..a8de2dc 100644
  
  # Date
  
+ ## Makefile
+ ```diff
+ diff --git a/Makefile b/Makefile
+old mode 100644
+new mode 100755
+index 6483959..e0f2a1d
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ # Set flag to correct CS333 project number: 1, 2, ...
+ # 0 == original xv6-pdx distribution functionality
+-CS333_PROJECT ?= 0
++CS333_PROJECT ?= 1
+ PRINT_SYSCALLS ?= 0
+ CS333_CFLAGS ?= -DPDX_XV6
+ ifeq ($(CS333_CFLAGS), -DPDX_XV6)
+@@ -13,7 +13,7 @@ endif
+
+ ifeq ($(CS333_PROJECT), 1)
+ CS333_CFLAGS += -DCS333_P1
+-CS333_UPROGS += #_date
++CS333_UPROGS += _date
+ endif
+
+ ifeq ($(CS333_PROJECT), 2)
+@@ -123,7 +123,7 @@ AS = $(TOOLPREFIX)gas
+ LD = $(TOOLPREFIX)ld
+ OBJCOPY = $(TOOLPREFIX)objcopy
+ OBJDUMP = $(TOOLPREFIX)objdump
+-CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -Og -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-aggressive-loop-optimizations
++CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -Og -Wall -MD -ggdb -m32 -fno-omit-frame-pointer -fno-aggressive-loop-optimizations
+ CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
+ CFLAGS += $(CS333_CFLAGS)
+ ASFLAGS = -m32 -gdwarf-2 -Wa,-divide
+ ```
+ 
  ## user.h
  ```diff
  @@ -39,6 +40,12 @@ void* memset(void*, int, uint);
