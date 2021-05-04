@@ -247,7 +247,6 @@ index d030537..1b2208c 100644
  {
 -  cprintf("TODO for Project 1, delete this line and implement procdumpP1() in proc.c to print a row\n");
 +  int ticks_now = ticks - (p->start_ticks);
-+  int sisa = 0;
 +  if (ticks_now < 1000) {
 +    cprintf("%d\t%s\t\t0.%d\t%s\t%d\t", p->pid, p->name, ticks_now, states[p->state], p->sz);
 +  }  else {
