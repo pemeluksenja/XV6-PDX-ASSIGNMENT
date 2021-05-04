@@ -209,3 +209,58 @@ index cff33a2..c1bdd96 100644
    exit();
  }
 ```
+
+# Control-P
+
+## proc.h
+```diff
+diff --git a/proc.h b/proc.h
+index 0a0b4c5..c7ee129 100644
+--- a/proc.h
++++ b/proc.h
+@@ -49,6 +49,7 @@ struct proc {
+   struct file *ofile[NOFILE];  // Open files
+   struct inode *cwd;           // Current directory
+   char name[16];               // Process name (debugging)
++  uint start_ticks;
+ };
+```
+
+## proc.c
+```diff
+diff --git a/proc.c b/proc.c
+index d030537..1b2208c 100644
+--- a/proc.c
++++ b/proc.c
+@@ -148,7 +148,7 @@ allocproc(void)
+   p->context = (struct context*)sp;
+   memset(p->context, 0, sizeof *p->context);
+   p->context->eip = (uint)forkret;
+-
++  p->start_ticks = ticks;
+   return p;
+ }
+
+@@ -563,7 +563,20 @@ procdumpP2P3P4(struct proc *p, char *state_string)
+ void
+ procdumpP1(struct proc *p, char *state_string)
+ {
+-  cprintf("TODO for Project 1, delete this line and implement procdumpP1() in proc.c to print a row\n");
++  int ticks_now = ticks - (p->start_ticks);
++  int sisa = 0;
++  if (ticks_now < 1000) {
++    cprintf("%d\t%s\t\t0.%d\t%s\t%d\t", p->pid, p->name, ticks_now, states[p->state], p->sz);
++  }  else {
++  int sisa = ticks_now % 1000;
++  ticks_now = ticks_now / 1000;
++  if (sisa == 0){
++    cprintf("%d\t%s\t\t0.%d\t%s\t%d\t", p->pid, p->name, ticks_now, states[p->state], p->sz);
++  }else{
++      cprintf("%d\t%s\t\t%d.%d\t%s\t%d\t", p->pid, p->name, ticks_now, sisa, states[p->state], p->sz);
++    }
++  }
++
+   return;
+ }
+ #endif
+```
