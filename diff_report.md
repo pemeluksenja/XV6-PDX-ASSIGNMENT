@@ -53,3 +53,159 @@ index 9105b52..a8de2dc 100644
  int atoo(const char*);
  int strncmp(const char*, const char*, uint);
  ```
+## usys.S
+```diff
+diff --git a/usys.S b/usys.S
+index 0d4eaed..e28e4e5 100644
+--- a/usys.S
++++ b/usys.S
+@@ -30,3 +30,4 @@ SYSCALL(sbrk)
+ SYSCALL(sleep)
+ SYSCALL(uptime)
+ SYSCALL(halt)
++SYSCALL(date)
+```
+
+## syscall.h
+```diff
+diff --git a/syscall.h b/syscall.h
+index 7fc8ce1..6fbd22a 100644
+--- a/syscall.h
++++ b/syscall.h
+@@ -21,4 +21,5 @@
+ #define SYS_mkdir   SYS_link+1
+ #define SYS_close   SYS_mkdir+1
+ #define SYS_halt    SYS_close+1
++#define SYS_date    SYS_halt+1 
+```
+
+
+## syscall.c
+```diff
+diff --git a/syscall.c b/syscall.c
+index 9105b52..1c1c1a1 100644
+--- a/syscall.c
++++ b/syscall.c
+@@ -103,6 +103,9 @@ extern int sys_unlink(void);
+ extern int sys_wait(void);
+ extern int sys_write(void);
+ extern int sys_uptime(void);
++#ifdef CS333_P1
++extern int sys_date(void);
++#endif
+ #ifdef PDX_XV6
+ extern int sys_halt(void);
+ #endif // PDX_XV6
+@@ -129,6 +132,9 @@ static int (*syscalls[])(void) = {
+ [SYS_link]    sys_link,
+ [SYS_mkdir]   sys_mkdir,
+ [SYS_close]   sys_close,
++#ifdef CS333_P1
++[SYS_date]    sys_date,
++#endif
+ #ifdef PDX_XV6
+ [SYS_halt]    sys_halt,
+ #endif // PDX_XV6
+@@ -157,12 +163,18 @@ static char *syscallnames[] = {
+   [SYS_link]    "link",
+   [SYS_mkdir]   "mkdir",
+   [SYS_close]   "close",
++#ifdef CS333_P1
++  [SYS_date]    "date",
++#endif
+ #ifdef PDX_XV6
+   [SYS_halt]    "halt",
+ #endif // PDX_XV6
+ };
+ #endif // PRINT_SYSCALLS
+
++
++
++
+ void
+   [SYS_link]    "link",
+   [SYS_mkdir]   "mkdir",
+   [SYS_close]   "close",
++#ifdef CS333_P1
++  [SYS_date]    "date",
++#endif
+ #ifdef PDX_XV6
+   [SYS_halt]    "halt",
+ #endif // PDX_XV6
+ };
+ #endif // PRINT_SYSCALLS
+```
+
+## sysproc.c
+```diff
+diff --git a/sysproc.c b/sysproc.c
+index 98563ea..63094e8 100644
+--- a/sysproc.c
++++ b/sysproc.c
+@@ -88,6 +88,19 @@ sys_uptime(void)
+   return xticks;
+ }
+ 
++#ifdef CS333_P1
++int
++sys_date(void)
++{
++  struct rtcdate *d;
++
++  if(argptr(0, (void*)&d, sizeof(struct rtcdate))<0)
++    return -1;
++  cmostime(d);
++    return 0;
++}
++#endif
++
+ #ifdef PDX_XV6
+ // shutdown QEMU
+ int
+```
+
+## date.c
+```diff
+diff --git a/date.c b/date.c
+index cff33a2..c1bdd96 100644
+--- a/date.c
++++ b/date.c
+@@ -6,7 +6,7 @@
+ #include "user.h"
+ #include "date.h"
+ 
+-#define PAD(x) ((x) < 10 ? "0" : "")
++#define PAD(x) ((x) < 10 ? "" : "")
+
+ static char *months[] = {"NULL", "Jan", "Feb", "Mar", "Apr",
+   "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+@@ -23,7 +23,7 @@ int
+ main(int argc, char *argv[])
+ {
+   int day;
+-  char *s;
++  // char *s;
+   struct rtcdate r;
+
+   if (date(&r)) {
+@@ -33,14 +33,13 @@ main(int argc, char *argv[])
+   }
+
+   day = dayofweek(r.year, r.month, r.day);
+-  s = r.hour < 12 ? "AM" : "PM";
++  // s = r.hour < 12 ? "AM" : "PM";
+
+-  r.hour %= 12;
+-  if (r.hour == 0) r.hour = 12;
++  // r.hour %= 12;
++  // if (r.hour == 0) r.hour = 12;
+
+-  printf(1, "%s %s%d %s %d %s%d:%s%d:%s%d %s UTC\n", days[day], PAD(r.day), r.day,
+-      months[r.month], r.year, PAD(r.hour), r.hour, PAD(r.minute), r.minute,
+-      PAD(r.second), r.second, s);
++  printf(1, "%s %s %s%d %s%d:%s%d:%s%d UTC %d\n", days[day], months[r.month], PAD(r.day), r.day,
++   PAD(r.hour), r.hour, PAD(r.minute), r.minute, PAD(r.second), r.second, r.year);
+
+   exit();
+ }
+```
