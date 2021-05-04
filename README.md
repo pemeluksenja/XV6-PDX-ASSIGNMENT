@@ -8,4 +8,4 @@
 
 ## Notes
 ### If you want to see changes I made, please check this file-> [diff_report.md](./diff_report.md)
-### If you want to see the screenshots of the running program, please check this folder -> [usertests] (./usertests)
+### If you want to see the screenshots of the running program, please check this folder-> [usertests] (./usertests)
