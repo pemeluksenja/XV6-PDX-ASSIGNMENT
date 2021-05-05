@@ -209,9 +209,7 @@ index cff33a2..c1bdd96 100644
 @@ -6,7 +6,7 @@
  #include "user.h"
  #include "date.h"
- 
--#define PAD(x) ((x) < 10 ? "0" : "")
-+#define PAD(x) ((x) < 10 ? "" : "")
+
 
  static char *months[] = {"NULL", "Jan", "Feb", "Mar", "Apr",
    "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -239,7 +237,7 @@ index cff33a2..c1bdd96 100644
 -  printf(1, "%s %s%d %s %d %s%d:%s%d:%s%d %s UTC\n", days[day], PAD(r.day), r.day,
 -      months[r.month], r.year, PAD(r.hour), r.hour, PAD(r.minute), r.minute,
 -      PAD(r.second), r.second, s);
-+  printf(1, "%s %s %s%d %s%d:%s%d:%s%d UTC %d\n", days[day], months[r.month], PAD(r.day), r.day,
++  printf(1, "%s %s %d %s%d:%s%d:%s%d UTC %d\n", days[day], months[r.month], r.day,
 +   PAD(r.hour), r.hour, PAD(r.minute), r.minute, PAD(r.second), r.second, r.year);
 
    exit();
