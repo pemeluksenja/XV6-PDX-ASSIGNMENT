@@ -9,6 +9,9 @@
 #ifdef PDX_XV6
 #include "pdx-kernel.h"
 #endif // PDX_XV6
+#ifdef CS333_P2
+#include "uproc.h"
+#endif
 
 int
 sys_fork(void)
@@ -98,6 +101,57 @@ sys_date(void)
     return -1;
   cmostime(d);
     return 0;
+}
+#endif
+
+#ifdef CS333_P2
+int
+sys_getuid(void){
+  return myproc()->uid;
+}
+int 
+sys_getgid(void){
+  return myproc()->gid;
+}
+int
+sys_getppid(void){
+  if (myproc()->pid == 1)
+   return myproc()->pid;
+  return myproc()->parent->pid;
+}
+int 
+sys_setuid(void){
+  int cont;
+  
+  if(argint(0, &cont) < 0 || cont < 0 || cont > 32767)
+    return -1;
+  
+  myproc()->uid = (uint)cont;
+  return 0;
+}
+int 
+sys_setgid(void){
+  int cont;
+  
+  if(argint(0, &cont) < 0 || cont < 0 || cont > 32767)
+    return -1;
+  
+  myproc()->gid = (uint)cont;
+  return 0;
+}
+int
+sys_getprocs(void){
+  int max;
+  struct uproc *table;
+
+  if(argint(0, &max) < 0){
+    return -1;
+  }
+  if (argptr(1, (void*)&table, sizeof(struct uproc)*max) < 0){
+    return -1;
+  }
+
+  return getprocs(max, table);
 }
 #endif
 
