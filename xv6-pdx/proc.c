@@ -616,39 +616,39 @@ getprocs(uint max, struct uproc * table)
 {
   sti(); // enable interupts
   struct proc *p;
-  int counter = 0;
+  int hitung = 0;
  
   acquire(&ptable.lock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
-    if(counter >= max)
+    if(hitung >= max)
     {
       break;
     }
     else
     {
       if(p->state != EMBRYO && p->state != UNUSED){
-        table[counter].pid = p->pid;
-        table[counter].uid = p->uid;
-        table[counter].gid = p->gid;
-        table[counter].ppid = p->parent ? p->parent->pid : p->pid;
-        table[counter].elapsed_ticks = (ticks-p->start_ticks);
-        table[counter].CPU_total_ticks = p->cpu_ticks_total;
-        safestrcpy(table[counter].state, states[p->state], STRMAX);
-        table[counter].size = p->sz;
-        safestrcpy(table[counter].name, p->name, STRMAX);
-        counter++;
+        table[hitung].pid = p->pid;
+        table[hitung].uid = p->uid;
+        table[hitung].gid = p->gid;
+        table[hitung].ppid = p->parent ? p->parent->pid : p->pid;
+        table[hitung].elapsed_ticks = (ticks-p->start_ticks);
+        table[hitung].CPU_total_ticks = p->cpu_ticks_total;
+        safestrcpy(table[hitung].state, states[p->state], STRMAX);
+        table[hitung].size = p->sz;
+        safestrcpy(table[hitung].name, p->name, STRMAX);
+        hitung++;
       }
     }
   }
 
   release(&ptable.lock);
  
-  if(counter == 0)
+  if(hitung == 0)
     return -1;
 
-  return counter;
+  return hitung;
 }
 #elif defined(CS333_P1)
 void
